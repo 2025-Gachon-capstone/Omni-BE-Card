@@ -1,3 +1,13 @@
 spring:
   application:
     name: Omni-BE-Card
+
+cors:
+  urls:
+    httpsGatewayURL: ${HTTPS_GATEWAY_URL}
+
+springdoc:
+  api-docs:
+    path: ${CARD_SWAGGER_PATH}
+  swagger-ui:
+    path: ${CARD_SWAGGER_PATH}
