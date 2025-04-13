@@ -36,4 +36,7 @@ public class Card extends BaseEntity {
 
     private LocalDateTime expiredDate;
 
+    @Version
+    private Long version;
+
 }
