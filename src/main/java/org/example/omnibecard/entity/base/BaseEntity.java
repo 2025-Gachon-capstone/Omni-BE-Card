@@ -29,6 +29,8 @@ public class BaseEntity {
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
         this.createdBy = "card-service";
+        this.updatedAt = LocalDateTime.now();
+        this.updatedBy = "card-service";
     }
 
     @PreUpdate

@@ -2,19 +2,27 @@ package org.example.omnibecard.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import org.example.omnibecard.common.apiPayload.ApiResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.example.omnibecard.dto.CardReqDto;
+import org.example.omnibecard.entity.Card;
+import org.example.omnibecard.service.CardService;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/card/v1")
 public class CardController {
 
-    @GetMapping("/test")
-    @Operation(summary = "테스트 API",description = "테스트를 위한 api입니다.",tags = "Card")
-    public ApiResult<?> test() {
+    private final CardService cardService;
 
-        return ApiResult.onSuccess("test is successful");
+    public CardController(CardService cardService) {
+        this.cardService = cardService;
+    }
+
+    @PostMapping("/cards")
+    @Operation(summary = "카드 생성 Api",description = "회원가입시 카드 생성하는 API입니다.",tags = "Card")
+    public ApiResult<Void> createCard(@RequestBody CardReqDto.CreateCard request) {
+
+        cardService.createCard(request);
+        return ApiResult.onSuccess();
 
     }
 
