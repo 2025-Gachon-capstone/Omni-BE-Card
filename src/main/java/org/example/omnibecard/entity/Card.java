@@ -36,9 +36,4 @@ public class Card extends BaseEntity {
 
     private LocalDateTime expiredDate;
 
-    @PrePersist
-    public void setExpiredDate() {
-        LocalDateTime baseTime = getCreatedAt() != null ? getCreatedAt() : LocalDateTime.now();
-        this.expiredDate = baseTime.plusYears(5);
-    }
 }
