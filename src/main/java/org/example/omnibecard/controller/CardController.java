@@ -1,6 +1,8 @@
 package org.example.omnibecard.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.Valid;
 import org.example.omnibecard.common.apiPayload.ApiResult;
 import org.example.omnibecard.dto.CardReqDto;
 import org.example.omnibecard.entity.Card;
@@ -18,12 +20,20 @@ public class CardController {
     }
 
     @PostMapping("/cards")
-    @Operation(summary = "카드 생성 Api",description = "회원가입시 카드 생성하는 API입니다.",tags = "Card")
+    @Operation(summary = "카드 생성 Api",description = "서비스 통신 전용 입니다. ",tags = "Service")
     public ApiResult<Void> createCard(@RequestBody CardReqDto.CreateCard request) {
 
         cardService.createCard(request);
         return ApiResult.onSuccess();
 
+    }
+
+    @PostMapping("/cards/verify")
+    @Operation(summary = "카드 비밀번호 인증 Api",description = "카드 비밀번호 4자리 입력해주세요. ",tags = "Card")
+    public ApiResult<?> verifyCardPassword(@Parameter(hidden = true) @RequestHeader("X-Authorization-Id") String loginId,
+                                           @Valid @RequestBody CardReqDto.VerifyCardPassword verifyCardPasswordDto) {
+        cardService.verifyCard(loginId, verifyCardPasswordDto.getCardPassword());
+        return ApiResult.onSuccess();
     }
 
 }

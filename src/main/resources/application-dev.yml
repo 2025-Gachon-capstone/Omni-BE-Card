@@ -12,7 +12,6 @@ spring:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
 
-
 cors:
   urls:
     httpsGatewayURL: ${HTTPS_GATEWAY_URL}
@@ -22,3 +21,5 @@ springdoc:
     path: ${CARD_SWAGGER_PATH}
   swagger-ui:
     path: ${CARD_SWAGGER_PATH}
+
+USER_SERVER_ADDRESS: ${USER_SERVER_ADDRESS}
