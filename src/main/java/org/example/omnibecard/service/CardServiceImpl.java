@@ -77,25 +77,8 @@ public class CardServiceImpl implements CardService {
     @Override
     public void verifyCard(String loginId, String cardPassword) {
 
-        Long memberId;
-
-        try {
-            ApiResult<UserResDto.GetMemberId> response = userClient.getMemberId(loginId);
-
-            if (!response.getIsSuccess()) {
-                throw new GeneralException(ErrorStatus._NOT_FOUND_LOGINID);
-            }
-
-            memberId = response.getResult().getMemberId();
-
-        } catch (Exception e) {
-            throw new GeneralException(ErrorStatus._USER_SERVICE_ERROR); // 유저 서버 연결 실패
-        }
-
-        Card card = cardRepository.findByMemberId(memberId)
-                .orElseThrow(()->new GeneralException(ErrorStatus._NOT_FOUND_CARD));
-
-        if(!passwordEncoder.matches(cardPassword, card.getCardPassword())){
+        Card card = getCardByLoginId(loginId);
+        if (!passwordEncoder.matches(cardPassword, card.getCardPassword())) {
             throw new GeneralException(ErrorStatus._NOT_MATCH_CARDPASSWORD);
         }
     }
@@ -103,8 +86,10 @@ public class CardServiceImpl implements CardService {
     @Override
     public Card getCard(String loginId) {
 
-        Long memberId;
+        return getCardByLoginId(loginId);
+    }
 
+    private Card getCardByLoginId(String loginId) {
         try {
             ApiResult<UserResDto.GetMemberId> response = userClient.getMemberId(loginId);
 
@@ -112,16 +97,15 @@ public class CardServiceImpl implements CardService {
                 throw new GeneralException(ErrorStatus._NOT_FOUND_LOGINID);
             }
 
-            memberId = response.getResult().getMemberId();
+            Long memberId = response.getResult().getMemberId();
+
+            return cardRepository.findByMemberId(memberId)
+                    .orElseThrow(() -> new GeneralException(ErrorStatus._NOT_FOUND_CARD));
 
         } catch (Exception e) {
-            throw new GeneralException(ErrorStatus._USER_SERVICE_ERROR); // 유저 서버 연결 실패
+            log.error("Feign 통신 에러", e);
+            throw new GeneralException(ErrorStatus._USER_SERVICE_ERROR);
         }
-
-        Card card = cardRepository.findByMemberId(memberId)
-                .orElseThrow(()->new GeneralException(ErrorStatus._NOT_FOUND_CARD));
-
-        return card;
     }
 
 }
