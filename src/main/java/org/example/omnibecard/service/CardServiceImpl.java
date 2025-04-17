@@ -99,4 +99,29 @@ public class CardServiceImpl implements CardService {
             throw new GeneralException(ErrorStatus._NOT_MATCH_CARDPASSWORD);
         }
     }
+
+    @Override
+    public Card getCard(String loginId) {
+
+        Long memberId;
+
+        try {
+            ApiResult<UserResDto.GetMemberId> response = userClient.getMemberId(loginId);
+
+            if (!response.getIsSuccess()) {
+                throw new GeneralException(ErrorStatus._NOT_FOUND_LOGINID);
+            }
+
+            memberId = response.getResult().getMemberId();
+
+        } catch (Exception e) {
+            throw new GeneralException(ErrorStatus._USER_SERVICE_ERROR); // 유저 서버 연결 실패
+        }
+
+        Card card = cardRepository.findByMemberId(memberId)
+                .orElseThrow(()->new GeneralException(ErrorStatus._NOT_FOUND_CARD));
+
+        return card;
+    }
+
 }
