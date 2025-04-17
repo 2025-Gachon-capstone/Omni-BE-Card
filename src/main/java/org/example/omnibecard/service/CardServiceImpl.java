@@ -9,6 +9,7 @@ import org.example.omnibecard.entity.Card;
 import org.example.omnibecard.repository.CardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,9 +21,11 @@ public class CardServiceImpl implements CardService {
 
     @Autowired
     private final CardRepository cardRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public CardServiceImpl(CardRepository cardRepository) {
+    public CardServiceImpl(CardRepository cardRepository, PasswordEncoder passwordEncoder) {
         this.cardRepository = cardRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -45,7 +48,7 @@ public class CardServiceImpl implements CardService {
                         .memberId(createCardDto.getMemberId())
                         .memberName(createCardDto.getMemberName())
                         .cardNumber(cardNumber)
-                        .cardPassword(createCardDto.getCardPassword())
+                        .cardPassword(passwordEncoder.encode(createCardDto.getCardPassword()))
                         .securityCode(CardGenerator.generateSecurityCode())
                         .expiredDate(LocalDateTime.now().plusYears(5))
                         .build();
