@@ -8,7 +8,7 @@ import org.example.omnibecard.entity.Card;
 public interface CardService {
 
     void createCard(CardReqDto.CreateCard createCardDto);
-    void verifyCard(String loginId, String cardPassword);
+    void verifyCard(Long memberId, String cardPassword);
 
-    CardResDto.GetCard getCard(String loginId);
+    CardResDto.GetCard getCard(Long memberId);
 }
