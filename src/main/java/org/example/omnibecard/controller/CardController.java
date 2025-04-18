@@ -22,7 +22,7 @@ public class CardController {
     }
 
     @PostMapping("/cards")
-    @Operation(summary = "카드 생성 Api",description = "서비스 통신 전용 입니다. ",tags = "Service")
+    @Operation(summary = "카드 생성 Api",description = "서비스 통신 전용 입니다. ",tags = "Service-Card")
     public ApiResult<Void> createCard(@RequestBody CardReqDto.CreateCard request) {
 
         cardService.createCard(request);
@@ -31,7 +31,7 @@ public class CardController {
     }
 
     @PostMapping("/cards/verify")
-    @Operation(summary = "카드 비밀번호 인증 Api",description = "카드 비밀번호 4자리 입력해주세요. ",tags = "Card")
+    @Operation(summary = "카드 비밀번호 인증 Api",description = "카드 비밀번호 4자리 입력해주세요. ( 엑세스 토큰 필요 ) ",tags = "Card")
     public ApiResult<?> verifyCardPassword(@Parameter(hidden = true) @RequestHeader("X-Authorization-Id") String loginId,
                                            @Valid @RequestBody CardReqDto.VerifyCardPassword verifyCardPasswordDto) {
         cardService.verifyCard(loginId, verifyCardPasswordDto.getCardPassword());
@@ -39,7 +39,7 @@ public class CardController {
     }
 
     @GetMapping("/my/cards")
-    @Operation(summary = "카드 정보 불러오기 Api",description = "카드 비밀번호는 서버에서 줄수 없어요...",tags = "Card")
+    @Operation(summary = "카드 정보 불러오기 Api",description = " 안전을 위해 확인된 비밀번호를 다시 보내주세요. ( 엑세스 토큰 필요 ) ",tags = "Card")
     public ApiResult<CardResDto.GetCard> getCard(@Parameter(hidden = true) @RequestHeader("X-Authorization-Id") String loginId){
 
         return ApiResult.onSuccess(cardService.getCard(loginId));
