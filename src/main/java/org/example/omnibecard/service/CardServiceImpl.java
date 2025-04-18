@@ -1,16 +1,13 @@
 package org.example.omnibecard.service;
 
-import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.example.omnibecard.client.UserClient;
-import org.example.omnibecard.common.apiPayload.ApiResult;
 import org.example.omnibecard.common.apiPayload.code.status.ErrorStatus;
 import org.example.omnibecard.common.apiPayload.exception.GeneralException;
 import org.example.omnibecard.common.util.CardGenerator;
 import org.example.omnibecard.converter.CardConverter;
 import org.example.omnibecard.dto.CardReqDto;
 import org.example.omnibecard.dto.CardResDto;
-import org.example.omnibecard.dto.UserResDto;
 import org.example.omnibecard.entity.Card;
 import org.example.omnibecard.repository.CardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,39 +74,24 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public void verifyCard(String loginId, String cardPassword) {
+    public void verifyCard(Long memberId, String cardPassword) {
 
-        Card card = getCardByLoginId(loginId);
+        Card card = cardRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus._NOT_FOUND_CARD));
+
         if (!passwordEncoder.matches(cardPassword, card.getCardPassword())) {
             throw new GeneralException(ErrorStatus._NOT_MATCH_CARDPASSWORD);
         }
     }
 
     @Override
-    public CardResDto.GetCard getCard(String loginId) {
+    public CardResDto.GetCard getCard(Long memberId) {
 
-        Card card = getCardByLoginId(loginId);
+        Card card = cardRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus._NOT_FOUND_CARD));
+
 
         return CardConverter.toGetCard(card);
-    }
-
-    private Card getCardByLoginId(String loginId) {
-        try {
-            ApiResult<UserResDto.GetMemberId> response = userClient.getMemberId(loginId);
-
-            if (!response.getIsSuccess()) {
-                throw new GeneralException(ErrorStatus._NOT_FOUND_LOGINID);
-            }
-
-            Long memberId = response.getResult().getMemberId();
-
-            return cardRepository.findByMemberId(memberId)
-                    .orElseThrow(() -> new GeneralException(ErrorStatus._NOT_FOUND_CARD));
-
-        } catch (Exception e) {
-            log.error("Feign 통신 에러", e);
-            throw new GeneralException(ErrorStatus._USER_SERVICE_ERROR);
-        }
     }
 
 }
