@@ -42,8 +42,7 @@ public class CardController {
     @Operation(summary = "카드 정보 불러오기 Api",description = "카드 비밀번호는 서버에서 줄수 없어요...",tags = "Card")
     public ApiResult<CardResDto.GetCard> getCard(@Parameter(hidden = true) @RequestHeader("X-Authorization-Id") String loginId){
 
-        Card card = cardService.getCard(loginId);
-        return ApiResult.onSuccess(CardConverter.toGetCard(card));
+        return ApiResult.onSuccess(cardService.getCard(loginId));
     }
 
 }
