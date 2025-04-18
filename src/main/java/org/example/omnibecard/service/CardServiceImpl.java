@@ -7,7 +7,9 @@ import org.example.omnibecard.common.apiPayload.ApiResult;
 import org.example.omnibecard.common.apiPayload.code.status.ErrorStatus;
 import org.example.omnibecard.common.apiPayload.exception.GeneralException;
 import org.example.omnibecard.common.util.CardGenerator;
+import org.example.omnibecard.converter.CardConverter;
 import org.example.omnibecard.dto.CardReqDto;
+import org.example.omnibecard.dto.CardResDto;
 import org.example.omnibecard.dto.UserResDto;
 import org.example.omnibecard.entity.Card;
 import org.example.omnibecard.repository.CardRepository;
@@ -84,9 +86,11 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public Card getCard(String loginId) {
+    public CardResDto.GetCard getCard(String loginId) {
 
-        return getCardByLoginId(loginId);
+        Card card = getCardByLoginId(loginId);
+
+        return CardConverter.toGetCard(card);
     }
 
     private Card getCardByLoginId(String loginId) {
