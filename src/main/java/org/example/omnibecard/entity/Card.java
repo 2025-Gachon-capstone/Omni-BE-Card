@@ -5,6 +5,8 @@ import lombok.*;
 import org.example.omnibecard.entity.base.BaseEntity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -35,6 +37,9 @@ public class Card extends BaseEntity {
     private String securityCode;
 
     private LocalDateTime expiredDate;
+
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CardBenefit> cardBenefits = new ArrayList<>();
 
     @Version
     private Long version;

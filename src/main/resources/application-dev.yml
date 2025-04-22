@@ -41,3 +41,4 @@ management:
         http.server.requests: true
 
 USER_SERVER_ADDRESS: ${USER_SERVER_ADDRESS}
+SPONSOR_SERVER_ADDRESS: ${SPONSOR_SERVER_ADDRESS}
