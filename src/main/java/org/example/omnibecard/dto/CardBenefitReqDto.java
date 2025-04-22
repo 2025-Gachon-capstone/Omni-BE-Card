@@ -18,4 +18,12 @@ public class CardBenefitReqDto {
 
     }
 
+    @Getter
+    public static class SyncCardBenefit{
+
+        private Long benefitId;
+        private String newStatus;
+
+    }
+
 }
