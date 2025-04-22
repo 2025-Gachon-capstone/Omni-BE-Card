@@ -165,44 +165,28 @@ public class CardBenefitServiceImpl implements CardBenefitService {
 
     @Override
     public List<CardBenefitResDto.GetCardBenefit> getAvailableCardBenefit(Long memberId) {
-
         Card card = cardRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._NOT_FOUND_CARD));
 
-        List<CardBenefit> cardBenefits = cardBenefitRepository.findByCard_CardIdAndStatus(card.getCardId(), CardBenefitStatus.ONGOING);
+        List<CardBenefit> cardBenefits = cardBenefitRepository.findByCard_CardIdAndStatus(
+                card.getCardId(), CardBenefitStatus.ONGOING);
 
-        List<Long> benefitIds = cardBenefits.stream()
-                .map(CardBenefit::getBenefitId)
-                .distinct()
-                .toList();
-
-        List<BenefitResDto.GetBatchBenefit> getBatchBenefits;
-
-        try {
-            ApiResult<List<BenefitResDto.GetBatchBenefit>> response = sponsorClient.getBatchBenefits(benefitIds);
-            getBatchBenefits = response.getResult();
-        } catch (FeignException e) {
-            log.error("스폰서 호출 실패: {}", e.contentUTF8());
-            throw new GeneralException(ErrorStatus._SPONSOR_SERVICE_ERROR);
-        }
-
-        Map<Long, BenefitResDto.GetBatchBenefit> benefitMap = getBatchBenefits.stream()
-                .collect(Collectors.toMap(BenefitResDto.GetBatchBenefit::getBenefitId, b -> b));
-
-        // 6. 변환해서 반환
-        return cardBenefits.stream()
-                .filter(cb -> benefitMap.containsKey(cb.getBenefitId()))
-                .map(cb -> CardBenefitConverter.toGetCardBenefit(cb, benefitMap.get(cb.getBenefitId())))
-                .toList();
+        return convertCardBenefits(cardBenefits);
     }
 
     @Override
     public List<CardBenefitResDto.GetCardBenefit> checkAvailableCardBenefit(CardBenefitReqDto.CheckAvailableCardBenefit dto) {
-
         Card card = cardRepository.findByCardNumber(dto.getCardNumber())
                 .orElseThrow(() -> new GeneralException(ErrorStatus._NOT_FOUND_CARD));
 
-        List<CardBenefit> cardBenefits = cardBenefitRepository.findByCard_CardIdAndStatus(card.getCardId(), CardBenefitStatus.ONGOING);
+        List<CardBenefit> cardBenefits = cardBenefitRepository.findByCard_CardIdAndStatus(
+                card.getCardId(), CardBenefitStatus.ONGOING);
+
+        return convertCardBenefits(cardBenefits);
+    }
+
+    private List<CardBenefitResDto.GetCardBenefit> convertCardBenefits(List<CardBenefit> cardBenefits) {
+        if (cardBenefits.isEmpty()) return List.of();
 
         List<Long> benefitIds = cardBenefits.stream()
                 .map(CardBenefit::getBenefitId)
@@ -210,7 +194,6 @@ public class CardBenefitServiceImpl implements CardBenefitService {
                 .toList();
 
         List<BenefitResDto.GetBatchBenefit> getBatchBenefits;
-
         try {
             ApiResult<List<BenefitResDto.GetBatchBenefit>> response = sponsorClient.getBatchBenefits(benefitIds);
             getBatchBenefits = response.getResult();
@@ -222,12 +205,10 @@ public class CardBenefitServiceImpl implements CardBenefitService {
         Map<Long, BenefitResDto.GetBatchBenefit> benefitMap = getBatchBenefits.stream()
                 .collect(Collectors.toMap(BenefitResDto.GetBatchBenefit::getBenefitId, b -> b));
 
-        // 6. 변환해서 반환
         return cardBenefits.stream()
                 .filter(cb -> benefitMap.containsKey(cb.getBenefitId()))
                 .map(cb -> CardBenefitConverter.toGetCardBenefit(cb, benefitMap.get(cb.getBenefitId())))
                 .toList();
-
     }
 
     @Override
