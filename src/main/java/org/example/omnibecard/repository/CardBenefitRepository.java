@@ -1,6 +1,7 @@
 package org.example.omnibecard.repository;
 
 import org.example.omnibecard.entity.CardBenefit;
+import org.example.omnibecard.entity.type.CardBenefitStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,5 +14,7 @@ public interface CardBenefitRepository extends JpaRepository<CardBenefit, Long> 
     List<CardBenefit> findValidByBenefitId(@Param("benefitId") Long benefitId);
 
     List<CardBenefit> findAllByBenefitId(Long benefitId);
+
+    List<CardBenefit> findByBenefitIdAndStatusIn(Long benefitId, List<CardBenefitStatus> statuses);
 
 }

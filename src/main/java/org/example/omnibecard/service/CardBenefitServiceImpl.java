@@ -6,6 +6,7 @@ import org.example.omnibecard.client.SponsorClient;
 import org.example.omnibecard.common.apiPayload.ApiResult;
 import org.example.omnibecard.common.apiPayload.code.status.ErrorStatus;
 import org.example.omnibecard.common.apiPayload.exception.GeneralException;
+import org.example.omnibecard.controller.CardBenefitController;
 import org.example.omnibecard.dto.BenefitResDto;
 import org.example.omnibecard.dto.CardBenefitReqDto;
 import org.example.omnibecard.entity.Card;
@@ -127,4 +128,24 @@ public class CardBenefitServiceImpl implements CardBenefitService {
             }
         }
     }
+
+    @Override
+    @Transactional
+    public void syncCardBenefit(List<CardBenefitReqDto.SyncCardBenefit> syncCardBenefitList) {
+
+        for (CardBenefitReqDto.SyncCardBenefit dto : syncCardBenefitList) {
+            CardBenefitStatus newStatus = CardBenefitStatus.valueOf(dto.getNewStatus());
+
+            List<CardBenefit> benefitsToUpdate = cardBenefitRepository.findByBenefitIdAndStatusIn(
+                    dto.getBenefitId(),
+                    List.of(CardBenefitStatus.BEFORE, CardBenefitStatus.ONGOING)
+            );
+
+            for (CardBenefit cb : benefitsToUpdate) {
+                cb.setStatus(newStatus);
+                cardBenefitRepository.save(cb);
+            }
+        }
+    }
+
 }
