@@ -34,7 +34,7 @@ public class CardBenefitController {
 
     @GetMapping("/my/cardBenefits")
     @Operation(summary = "전체 카드 혜택 Api",description = " 페이징 필요 - ( page, size 만 적어도 됨, 스웨거에서 sort 는 배열이 아닌 빈문자열로 넣어주세요 )  - ( 엑세스 토큰 필요 )",tags = "CardBenefit")
-    public ApiResult<CardBenefitResDto.GetCardBenefitPage> GetCardBenefits(@PageableDefault(size = 10, sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable,
+    public ApiResult<CardBenefitResDto.GetCardBenefitPage> getCardBenefits(@PageableDefault(size = 10, sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable,
                                                                            @Parameter(hidden = true) @RequestHeader("X-Authorization-Id") Long memberId){
 
         return ApiResult.onSuccess(cardBenefitService.getCardBenefits(memberId, pageable));
@@ -43,9 +43,17 @@ public class CardBenefitController {
 
     @GetMapping("/my/cardBenefits/available")
     @Operation(summary = "사용가능한 카드 혜택 Api",description = " 상태가 ONGOING인 카드혜택만 보여집니다. - ( 엑세스 토큰 필요 )",tags = "CardBenefit")
-    public ApiResult<List<CardBenefitResDto.GetCardBenefit>> GetAvailableCardBenefits(@Parameter(hidden = true) @RequestHeader("X-Authorization-Id") Long memberId){
+    public ApiResult<List<CardBenefitResDto.GetCardBenefit>> getAvailableCardBenefits(@Parameter(hidden = true) @RequestHeader("X-Authorization-Id") Long memberId){
 
         return ApiResult.onSuccess(cardBenefitService.getAvailableCardBenefit(memberId));
+
+    }
+
+    @PostMapping("/cardBenefits/check")
+    @Operation(summary = "카드 혜택 확인하기 Api",description = " 카드 번호 16자리를 입력해주세요. - ( 엑세스 토큰 필요 )",tags = "CardBenefit")
+    public ApiResult<List<CardBenefitResDto.GetCardBenefit>> checkAvailableCardBenefits(@RequestBody CardBenefitReqDto.CheckAvailableCardBenefit checkAvailableCardBenefit){
+
+        return ApiResult.onSuccess(cardBenefitService.checkAvailableCardBenefit(checkAvailableCardBenefit));
 
     }
 
