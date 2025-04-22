@@ -21,5 +21,7 @@ public interface CardBenefitRepository extends JpaRepository<CardBenefit, Long> 
 
     Page<CardBenefit> findByCard_CardId(Long cardId, Pageable pageable);
 
+    List<CardBenefit> findByCard_CardIdAndStatus(Long cardId, CardBenefitStatus status);
+
 
 }

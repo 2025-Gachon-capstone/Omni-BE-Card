@@ -41,6 +41,14 @@ public class CardBenefitController {
 
     }
 
+    @GetMapping("/my/cardBenefits/available")
+    @Operation(summary = "사용가능한 카드 혜택 Api",description = " 상태가 ONGOING인 카드혜택만 보여집니다. - ( 엑세스 토큰 필요 )",tags = "CardBenefit")
+    public ApiResult<List<CardBenefitResDto.GetCardBenefit>> GetAvailableCardBenefits(@Parameter(hidden = true) @RequestHeader("X-Authorization-Id") Long memberId){
+
+        return ApiResult.onSuccess(cardBenefitService.getAvailableCardBenefit(memberId));
+
+    }
+
     @PostMapping("/cardBenefits/sync-status")
     @Operation(summary = "카드 혜택 변경 Api",description = " 서비스 끼리 통신입니다. ",tags = "Service-CardBenefit")
     public ApiResult<?> syncCardBenefit(@RequestBody List<CardBenefitReqDto.SyncCardBenefit> syncCardBenefitList){
