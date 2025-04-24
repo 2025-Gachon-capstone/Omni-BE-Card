@@ -64,4 +64,15 @@ public class CardController {
         return ApiResult.onSuccess(cardService.getCard(memberId));
     }
 
+    @PostMapping("/memberId")
+    @Operation(summary = "memberId 가져오기 Api",description = " 서비스끼리 통신입니다. ",tags = "Service-Card")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "COMMON200-성공",content = @Content(schema = @Schema(implementation = ApiResult.class))),
+            @ApiResponse(responseCode = "4002", description = "CARD4002-사용자의 카드가 없습니다.",content = @Content(schema = @Schema(implementation = ApiResult.class))),
+    })
+    public ApiResult<CardResDto.GetMemberId> getCard(@RequestBody CardReqDto.GetMemberId getMemberIdDto){
+
+        return ApiResult.onSuccess(cardService.getMemberId(getMemberIdDto));
+    }
+
 }

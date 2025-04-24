@@ -25,4 +25,14 @@ public class CardResDto {
 
     }
 
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class GetMemberId{
+
+        private Long memberId;
+    }
+
+
 }
