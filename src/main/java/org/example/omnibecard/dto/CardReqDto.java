@@ -22,6 +22,11 @@ public class CardReqDto {
 
     }
 
+    @Getter
+    public static class GetMemberId{
 
+        private String cardNumber;
+
+    }
 
 }

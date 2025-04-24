@@ -94,4 +94,13 @@ public class CardServiceImpl implements CardService {
         return CardConverter.toGetCard(card);
     }
 
+    @Override
+    public CardResDto.GetMemberId getMemberId(CardReqDto.GetMemberId getMemberIdDto) {
+
+        Card card = cardRepository.findByCardNumber(getMemberIdDto.getCardNumber())
+                .orElseThrow(() -> new GeneralException(ErrorStatus._NOT_FOUND_CARD));
+
+        return new CardResDto.GetMemberId(card.getMemberId());
+    }
+
 }
