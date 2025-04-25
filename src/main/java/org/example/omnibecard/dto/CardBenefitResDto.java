@@ -24,6 +24,7 @@ public class CardBenefitResDto {
         private LocalDate updatedAt;
         private LocalDate endDate;
         private String status;
+        private String targetProduct;
 
     }
 

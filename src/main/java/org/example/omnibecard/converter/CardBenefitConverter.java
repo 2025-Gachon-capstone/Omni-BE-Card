@@ -20,6 +20,7 @@ public class CardBenefitConverter {
                 .updatedAt(cb.getUpdatedAt().toLocalDate())
                 .endDate(benefit.getEndDate())
                 .status(String.valueOf(cb.getStatus()))
+                .targetProduct(benefit.getTargetProduct())
                 .build();
     }
 
