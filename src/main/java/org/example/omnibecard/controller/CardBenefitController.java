@@ -71,7 +71,7 @@ public class CardBenefitController {
     }
 
     @PostMapping("/cardBenefits/check")
-    @Operation(summary = "카드 혜택 확인하기 Api",description = " 카드 번호 16자리를 입력해주세요. - ( 엑세스 토큰 필요 )",tags = "CardBenefit")
+    @Operation(summary = "카드 혜택 확인하기 Api",description = " 카드 번호 16자리를 입력해주세요. - ( 토큰 필요 없음 )",tags = "CardBenefit")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "COMMON200-성공",content = @Content(schema = @Schema(implementation = ApiResult.class))),
             @ApiResponse(responseCode = "4002", description = "CARD4002-사용자의 카드가 없습니다.",content = @Content(schema = @Schema(implementation = ApiResult.class))),
