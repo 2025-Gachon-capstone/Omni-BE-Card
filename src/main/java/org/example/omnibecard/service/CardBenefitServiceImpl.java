@@ -230,4 +230,10 @@ public class CardBenefitServiceImpl implements CardBenefitService {
         }
     }
 
+    @Override
+    public boolean existsCardBenefit(Long benefitId) {
+        boolean exists = cardBenefitRepository.existsByBenefitId(benefitId);
+        return exists;
+    }
+
 }
