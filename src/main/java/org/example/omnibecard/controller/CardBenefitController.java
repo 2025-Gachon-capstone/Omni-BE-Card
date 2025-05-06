@@ -93,4 +93,14 @@ public class CardBenefitController {
         return ApiResult.onSuccess();
 
     }
+
+    @GetMapping("/cardBenefits/exist")
+    @Operation(summary = "카드 혜택 존재 여부 Api",description = " 서비스 끼리 통신입니다. ",tags = "Service-CardBenefit")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "COMMON200-성공",content = @Content(schema = @Schema(implementation = ApiResult.class))),
+    })
+    public ApiResult<Boolean> existCardBenefit(@RequestParam Long benefitId){
+
+        return ApiResult.onSuccess(cardBenefitService.existsCardBenefit(benefitId));
+    }
 }

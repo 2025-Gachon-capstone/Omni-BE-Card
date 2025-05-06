@@ -13,4 +13,5 @@ public interface CardBenefitService {
     List<CardBenefitResDto.GetCardBenefit> getAvailableCardBenefit(Long memberId);
     List<CardBenefitResDto.GetCardBenefit> checkAvailableCardBenefit(CardBenefitReqDto.CheckAvailableCardBenefit dto);
     void syncCardBenefit(List<CardBenefitReqDto.SyncCardBenefit> syncCardBenefitList);
+    boolean existsCardBenefit(Long benefitId);
 }

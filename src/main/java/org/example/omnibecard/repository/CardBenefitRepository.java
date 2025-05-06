@@ -23,5 +23,6 @@ public interface CardBenefitRepository extends JpaRepository<CardBenefit, Long> 
 
     List<CardBenefit> findByCard_CardIdAndStatus(Long cardId, CardBenefitStatus status);
 
+    boolean existsByBenefitId(Long benefitId);
 
 }
