@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class CardResDto {
 
@@ -34,5 +35,34 @@ public class CardResDto {
         private Long memberId;
     }
 
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class GetCardForAdmin{
+
+        private String loginId;
+        private String memberName;
+        private String cardNumber;
+        private String createdAt;
+        private String updatedAt;
+        private String benefitTitle;
+        private String status;
+
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class GetCardForAdminPage{
+
+        List<CardResDto.GetCardForAdmin> cards;
+        boolean isFirst;
+        boolean isLast;
+        int pageSize;
+        long totalElements;
+
+    }
 
 }
