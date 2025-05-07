@@ -121,46 +121,4 @@ public class CardServiceImpl implements CardService {
         return new CardResDto.GetMemberId(card.getMemberId());
     }
 
-    @Override
-    public CardResDto.GetCardForAdminPage getCardForAdmin(Pageable pageable) {
-
-        Page<Card> cards = cardRepository.findAll(pageable);
-
-        Set<Long> memberIds = cards.stream()
-                .map(Card::getMemberId)
-                .collect(Collectors.toSet());
-
-        ApiResult<List<MemberResDto.GetMemberList>> memberRes;
-
-        try {
-            memberRes = userClient.getMemberList(new ArrayList<>(memberIds));
-        } catch (Exception e) {
-            log.error("Feign 통신 오류: 유저 서버 호출 실패", e);
-            throw new GeneralException(ErrorStatus._USER_SERVICE_ERROR);
-        }
-
-        Map<Long, MemberResDto.GetMemberList> memberMap = memberRes.getResult().stream()
-                .collect(Collectors.toMap(MemberResDto.GetMemberList::getMemberId, Function.identity()));
-
-        Map<Long, CardBenefit> latestBenefitMap = cardBenefitService.getLatestBenefits(cards.getContent());
-
-        Set<Long> benefitIds = latestBenefitMap.values().stream()
-                .map(CardBenefit::getBenefitId)
-                .collect(Collectors.toSet());
-
-        ApiResult<List<BenefitResDto.GetBatchBenefit>> benefitRes;
-
-        try {
-            benefitRes = sponsorClient.getBatchBenefits(new ArrayList<>(benefitIds));
-        } catch (Exception e) {
-            log.error("Feign 통신 오류: 스폰서 서버 호출 실패", e);
-            throw new GeneralException(ErrorStatus._SPONSOR_SERVICE_ERROR);
-        }
-
-        Map<Long, BenefitResDto.GetBatchBenefit> benefitMap = benefitRes.getResult().stream()
-                .collect(Collectors.toMap(BenefitResDto.GetBatchBenefit::getBenefitId, Function.identity()));
-
-        return CardConverter.toGetCardForAdminPage(cards, memberMap, latestBenefitMap, benefitMap);
-    }
-
 }

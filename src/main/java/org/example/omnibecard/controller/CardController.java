@@ -80,20 +80,4 @@ public class CardController {
         return ApiResult.onSuccess(cardService.getMemberId(getMemberIdDto));
     }
 
-    @GetMapping("/admin/members")
-    @Operation(summary = "전체 사용자 카드 정보 가져오기 Api",description = " 관리자 전용입니다. - ( 엑세스 토큰 필요 + 관리자 로그인 필요 )",tags = "Admin-Card")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "COMMON200-성공",content = @Content(schema = @Schema(implementation = ApiResult.class))),
-            @ApiResponse(responseCode = "402", description = "COMMON402-금지된 요청입니다.",content = @Content(schema = @Schema(implementation = ApiResult.class))),
-    })
-    public ApiResult<CardResDto.GetCardForAdminPage> getCardForAdmin(@Parameter(hidden = true) @RequestHeader("X-Authorization-Role") String role,
-                                        @PageableDefault(size = 10, sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable){
-
-        if (!"ADMIN".equalsIgnoreCase(role)) {
-            throw new GeneralException(ErrorStatus._FORBIDDEN);
-        }
-
-        return ApiResult.onSuccess(cardService.getCardForAdmin(pageable));
-    }
-
 }
