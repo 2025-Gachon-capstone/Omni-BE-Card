@@ -21,10 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -234,6 +231,24 @@ public class CardBenefitServiceImpl implements CardBenefitService {
     public boolean existsCardBenefit(Long benefitId) {
         boolean exists = cardBenefitRepository.existsByBenefitId(benefitId);
         return exists;
+    }
+
+    @Override
+    public Map<Long, CardBenefit> getLatestBenefits(List<Card> cards) {
+        List<Long> cardIds = cards.stream()
+                .map(Card::getCardId)
+                .toList();
+
+        List<CardBenefit> benefits = cardBenefitRepository.findByCard_CardIdIn(cardIds);
+
+        return benefits.stream()
+                .collect(Collectors.groupingBy(
+                        benefit -> benefit.getCard().getCardId(),  // 여기만 수정
+                        Collectors.collectingAndThen(
+                                Collectors.maxBy(Comparator.comparing(CardBenefit::getUpdatedAt)),
+                                Optional::get
+                        )
+                ));
     }
 
 }
