@@ -1,5 +1,6 @@
 package org.example.omnibecard.repository;
 
+import org.example.omnibecard.entity.Card;
 import org.example.omnibecard.entity.CardBenefit;
 import org.example.omnibecard.entity.type.CardBenefitStatus;
 import org.springframework.data.domain.Page;
@@ -26,5 +27,7 @@ public interface CardBenefitRepository extends JpaRepository<CardBenefit, Long> 
     boolean existsByBenefitId(Long benefitId);
 
     List<CardBenefit> findByCard_CardIdIn(List<Long> cardIds);
+
+    List<CardBenefit> findByCardAndStatusInOrderByCreatedAtDesc(Card card, List<CardBenefitStatus> statuses);
 
 }

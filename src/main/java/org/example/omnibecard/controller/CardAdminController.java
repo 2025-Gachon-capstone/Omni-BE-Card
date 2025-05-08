@@ -15,10 +15,7 @@ import org.example.omnibecard.service.CardAdminService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/card/v1/admin")
@@ -44,6 +41,22 @@ public class CardAdminController {
         }
 
         return ApiResult.onSuccess(cardAdminService.getCardForAdmin(pageable));
+    }
+
+    @GetMapping("/members/{memberId}")
+    @Operation(summary = "카드 정보 상세 가져오기 Api",description = " 관리자 전용입니다. - ( 엑세스 토큰 필요 + 관리자 로그인 필요 )",tags = "Admin-Card")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "COMMON200-성공",content = @Content(schema = @Schema(implementation = ApiResult.class))),
+            @ApiResponse(responseCode = "402", description = "COMMON402-금지된 요청입니다.",content = @Content(schema = @Schema(implementation = ApiResult.class))),
+    })
+    public ApiResult<CardResDto.GetCardDetailForAdmin> getCardDetatilForAdmin(@Parameter(hidden = true) @RequestHeader("X-Authorization-Role") String role,
+                                                                              @PathVariable Long memberId){
+
+        if (!"ADMIN".equalsIgnoreCase(role)) {
+            throw new GeneralException(ErrorStatus._FORBIDDEN);
+        }
+
+        return ApiResult.onSuccess(cardAdminService.getCardDetailForAdmin(memberId));
     }
 
 }
