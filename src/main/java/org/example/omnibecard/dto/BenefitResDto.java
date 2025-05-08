@@ -31,4 +31,15 @@ public class BenefitResDto {
 
     }
 
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class GetBenefitTitle{
+
+        private Long benefitId;
+        private String title;
+
+    }
+
 }

@@ -41,6 +41,7 @@ public class CardResDto {
     @NoArgsConstructor
     public static class GetCardForAdmin{
 
+        private Long memberId;
         private String loginId;
         private String memberName;
         private String cardNumber;
@@ -62,6 +63,22 @@ public class CardResDto {
         boolean isLast;
         int pageSize;
         long totalElements;
+
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class GetCardDetailForAdmin{
+
+        private Long memberId;
+        private Long cardId;
+        private String memberName;
+        private String cardNumber;
+        private String createdAt;
+        private String updatedAt;
+        private List<BenefitResDto.GetBenefitTitle> cardBenefits;
 
     }
 

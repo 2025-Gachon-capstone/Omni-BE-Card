@@ -12,6 +12,8 @@ import org.example.omnibecard.dto.CardResDto;
 import org.example.omnibecard.dto.MemberResDto;
 import org.example.omnibecard.entity.Card;
 import org.example.omnibecard.entity.CardBenefit;
+import org.example.omnibecard.entity.type.CardBenefitStatus;
+import org.example.omnibecard.repository.CardBenefitRepository;
 import org.example.omnibecard.repository.CardRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,13 +32,16 @@ public class CardAdminServiceImpl implements CardAdminService {
 
     private final CardRepository cardRepository;
     private final CardBenefitService cardBenefitService;
+    private final CardBenefitRepository cardBenefitRepository;
     private final UserClient userClient;
     private final SponsorClient sponsorClient;
 
     public CardAdminServiceImpl(CardRepository cardRepository, CardBenefitService cardBenefitService,
-                                UserClient userClient, SponsorClient sponsorClient) {
+                                UserClient userClient, SponsorClient sponsorClient,
+                                CardBenefitRepository cardBenefitRepository) {
         this.cardRepository = cardRepository;
         this.cardBenefitService = cardBenefitService;
+        this.cardBenefitRepository = cardBenefitRepository;
         this.userClient = userClient;
         this.sponsorClient = sponsorClient;
     }
@@ -81,5 +86,34 @@ public class CardAdminServiceImpl implements CardAdminService {
 
         return CardConverter.toGetCardForAdminPage(cards, memberMap, latestBenefitMap, benefitMap);
     }
+
+    @Override
+    public CardResDto.GetCardDetailForAdmin getCardDetailForAdmin(Long memberId) {
+
+        Card card = cardRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus._NOT_FOUND_CARD));
+
+        List<CardBenefit> cardBenefits = cardBenefitRepository.findByCardAndStatusInOrderByCreatedAtDesc(
+                card, List.of(CardBenefitStatus.ONGOING, CardBenefitStatus.BEFORE)
+        );
+
+        List<Long> benefitIds = cardBenefits.stream()
+                .map(CardBenefit::getBenefitId)
+                .collect(Collectors.toList());
+
+        ApiResult<List<BenefitResDto.GetBatchBenefit>> benefitRes;
+        try {
+            benefitRes = sponsorClient.getBatchBenefits(new ArrayList<>(benefitIds));
+        } catch (Exception e) {
+            log.error("Feign 통신 오류: 스폰서 서버 호출 실패", e);
+            throw new GeneralException(ErrorStatus._SPONSOR_SERVICE_ERROR);
+        }
+
+        Map<Long, BenefitResDto.GetBatchBenefit> benefitMap = benefitRes.getResult().stream()
+                .collect(Collectors.toMap(BenefitResDto.GetBatchBenefit::getBenefitId, Function.identity()));
+
+        return CardConverter.toGetCardDetailForAdminDto(memberId, card, cardBenefits, benefitMap);
+    }
+
 
 }

@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class CardConverter {
 
@@ -38,6 +39,7 @@ public class CardConverter {
             BenefitResDto.GetBatchBenefit benefitDto
     ) {
         return CardResDto.GetCardForAdmin.builder()
+                .memberId(card.getMemberId())
                 .loginId(member.getLoginId())
                 .memberName(member.getMemberName())
                 .cardNumber(card.getCardNumber())
@@ -75,6 +77,33 @@ public class CardConverter {
                 .isLast(cardPage.isLast())
                 .pageSize(cardPage.getSize())
                 .totalElements(cardPage.getTotalElements())
+                .build();
+    }
+
+    public static CardResDto.GetCardDetailForAdmin toGetCardDetailForAdminDto(
+            Long memberId,
+            Card card,
+            List<CardBenefit> cardBenefits,
+            Map<Long, BenefitResDto.GetBatchBenefit> benefitMap
+    ) {
+        List<BenefitResDto.GetBenefitTitle> benefitDtos = cardBenefits.stream()
+                .map(cb -> {
+                    BenefitResDto.GetBatchBenefit benefitDto = benefitMap.get(cb.getBenefitId());
+                    return BenefitResDto.GetBenefitTitle.builder()
+                            .benefitId(benefitDto.getBenefitId())
+                            .title(benefitDto != null ? benefitDto.getTitle() : "제목 없음")
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return CardResDto.GetCardDetailForAdmin.builder()
+                .memberId(memberId)
+                .cardId(card.getCardId())
+                .memberName(card.getMemberName())
+                .cardNumber(card.getCardNumber())
+                .createdAt(format(card.getCreatedAt()))
+                .updatedAt(format(card.getUpdatedAt()))
+                .cardBenefits(benefitDtos)
                 .build();
     }
 
