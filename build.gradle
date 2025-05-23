@@ -62,8 +62,6 @@ dependencies {
     // openfeign
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
-    implementation 'de.mkammerer:argon2-jvm:2.11'
-
 }
 
 dependencyManagement {

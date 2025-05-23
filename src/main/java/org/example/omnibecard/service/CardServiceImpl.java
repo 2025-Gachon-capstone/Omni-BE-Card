@@ -3,34 +3,21 @@ package org.example.omnibecard.service;
 import lombok.extern.slf4j.Slf4j;
 import org.example.omnibecard.client.SponsorClient;
 import org.example.omnibecard.client.UserClient;
-import org.example.omnibecard.common.apiPayload.ApiResult;
 import org.example.omnibecard.common.apiPayload.code.status.ErrorStatus;
 import org.example.omnibecard.common.apiPayload.exception.GeneralException;
-import org.example.omnibecard.common.util.Argon2Util;
 import org.example.omnibecard.common.util.CardGenerator;
 import org.example.omnibecard.converter.CardConverter;
-import org.example.omnibecard.dto.BenefitResDto;
 import org.example.omnibecard.dto.CardReqDto;
 import org.example.omnibecard.dto.CardResDto;
-import org.example.omnibecard.dto.MemberResDto;
 import org.example.omnibecard.entity.Card;
-import org.example.omnibecard.entity.CardBenefit;
 import org.example.omnibecard.repository.CardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -38,18 +25,19 @@ public class CardServiceImpl implements CardService {
 
     @Autowired
     private final CardRepository cardRepository;
-//    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final UserClient userClient;
     private final CardBenefitService cardBenefitService;
     private final SponsorClient sponsorClient;
 
-    public CardServiceImpl(CardRepository cardRepository,
+    public CardServiceImpl(CardRepository cardRepository,PasswordEncoder passwordEncoder,
                            UserClient userClient, CardBenefitService cardBenefitService,
                            SponsorClient sponsorClient) {
         this.cardRepository = cardRepository;
         this.userClient = userClient;
         this.cardBenefitService = cardBenefitService;
         this.sponsorClient = sponsorClient;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -72,8 +60,7 @@ public class CardServiceImpl implements CardService {
                         .memberId(createCardDto.getMemberId())
                         .memberName(createCardDto.getMemberName())
                         .cardNumber(cardNumber)
-//                        .cardPassword(passwordEncoder.encode(createCardDto.getCardPassword()))
-                        .cardPassword(Argon2Util.hash(createCardDto.getCardPassword()))
+                        .cardPassword(passwordEncoder.encode(createCardDto.getCardPassword()))
                         .securityCode(CardGenerator.generateSecurityCode())
                         .expiredDate(LocalDateTime.now().plusYears(5))
                         .build();
@@ -98,13 +85,10 @@ public class CardServiceImpl implements CardService {
         Card card = cardRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._NOT_FOUND_CARD));
 
-//        if (!passwordEncoder.matches(cardPassword, card.getCardPassword())) {
-//            throw new GeneralException(ErrorStatus._NOT_MATCH_CARDPASSWORD);
-//        }
-
-        if (!Argon2Util.verify(card.getCardPassword(), cardPassword)) {
+        if (!passwordEncoder.matches(cardPassword, card.getCardPassword())) {
             throw new GeneralException(ErrorStatus._NOT_MATCH_CARDPASSWORD);
         }
+
     }
 
     @Override
