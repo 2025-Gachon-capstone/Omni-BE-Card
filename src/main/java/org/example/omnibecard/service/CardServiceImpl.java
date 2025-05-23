@@ -38,16 +38,15 @@ public class CardServiceImpl implements CardService {
 
     @Autowired
     private final CardRepository cardRepository;
-    private final PasswordEncoder passwordEncoder;
+//    private final PasswordEncoder passwordEncoder;
     private final UserClient userClient;
     private final CardBenefitService cardBenefitService;
     private final SponsorClient sponsorClient;
 
-    public CardServiceImpl(CardRepository cardRepository, PasswordEncoder passwordEncoder,
+    public CardServiceImpl(CardRepository cardRepository,
                            UserClient userClient, CardBenefitService cardBenefitService,
                            SponsorClient sponsorClient) {
         this.cardRepository = cardRepository;
-        this.passwordEncoder = passwordEncoder;
         this.userClient = userClient;
         this.cardBenefitService = cardBenefitService;
         this.sponsorClient = sponsorClient;
