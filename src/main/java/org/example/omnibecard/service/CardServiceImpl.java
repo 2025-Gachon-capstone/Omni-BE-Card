@@ -6,6 +6,7 @@ import org.example.omnibecard.client.UserClient;
 import org.example.omnibecard.common.apiPayload.ApiResult;
 import org.example.omnibecard.common.apiPayload.code.status.ErrorStatus;
 import org.example.omnibecard.common.apiPayload.exception.GeneralException;
+import org.example.omnibecard.common.util.Argon2Util;
 import org.example.omnibecard.common.util.CardGenerator;
 import org.example.omnibecard.converter.CardConverter;
 import org.example.omnibecard.dto.BenefitResDto;
@@ -72,7 +73,8 @@ public class CardServiceImpl implements CardService {
                         .memberId(createCardDto.getMemberId())
                         .memberName(createCardDto.getMemberName())
                         .cardNumber(cardNumber)
-                        .cardPassword(passwordEncoder.encode(createCardDto.getCardPassword()))
+//                        .cardPassword(passwordEncoder.encode(createCardDto.getCardPassword()))
+                        .cardPassword(Argon2Util.hash(createCardDto.getCardPassword()))
                         .securityCode(CardGenerator.generateSecurityCode())
                         .expiredDate(LocalDateTime.now().plusYears(5))
                         .build();
@@ -97,7 +99,11 @@ public class CardServiceImpl implements CardService {
         Card card = cardRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._NOT_FOUND_CARD));
 
-        if (!passwordEncoder.matches(cardPassword, card.getCardPassword())) {
+//        if (!passwordEncoder.matches(cardPassword, card.getCardPassword())) {
+//            throw new GeneralException(ErrorStatus._NOT_MATCH_CARDPASSWORD);
+//        }
+
+        if (!Argon2Util.verify(card.getCardPassword(), cardPassword)) {
             throw new GeneralException(ErrorStatus._NOT_MATCH_CARDPASSWORD);
         }
     }
