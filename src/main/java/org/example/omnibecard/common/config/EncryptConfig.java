@@ -9,9 +9,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class EncryptConfig {
 
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder(8);
-//    }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(8);
+    }
 
 }
