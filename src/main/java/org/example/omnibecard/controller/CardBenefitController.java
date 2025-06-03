@@ -37,9 +37,9 @@ public class CardBenefitController {
             @ApiResponse(responseCode = "4003", description = "BENEFIT4003-혜택의 수량을 초과하였습니다.",content = @Content(schema = @Schema(implementation = ApiResult.class))),
             @ApiResponse(responseCode = "5002", description = "SERVICE5002-SPONSOR 서버 에러",content = @Content(schema = @Schema(implementation = ApiResult.class)))
     })
-    public ApiResult<Void> createCardBenefit(@RequestBody CardBenefitReqDto.CreateCardBenefit createCardBenefitDto){
-        cardBenefitService.createCardBenefit(createCardBenefitDto);
-        return ApiResult.onSuccess();
+    public ApiResult<List<Long>> createCardBenefit(@RequestBody CardBenefitReqDto.CreateCardBenefit createCardBenefitDto){
+
+        return ApiResult.onSuccess(cardBenefitService.createCardBenefit(createCardBenefitDto));
 
     }
 
