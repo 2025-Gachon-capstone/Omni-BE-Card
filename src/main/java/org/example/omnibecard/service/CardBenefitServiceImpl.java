@@ -41,7 +41,7 @@ public class CardBenefitServiceImpl implements CardBenefitService {
 
     @Override
     @Transactional
-    public void createCardBenefit(CardBenefitReqDto.CreateCardBenefit cardBenefitDto) {
+    public List<Long> createCardBenefit(CardBenefitReqDto.CreateCardBenefit cardBenefitDto) {
 
         // 1. 스폰서 서비스에서 혜택 정보 가져오기
         BenefitResDto.GetBenefit benefitDto;
@@ -128,6 +128,14 @@ public class CardBenefitServiceImpl implements CardBenefitService {
                 cardBenefitRepository.save(newCardBenefit);
             }
         }
+
+        List<Long> finalMemberIds = cardBenefitRepository.findAllByBenefitId(benefitDto.getBenefitId()).stream()
+                .filter(cb -> cb.getStatus() != CardBenefitStatus.DELETED &&
+                        cb.getStatus() != CardBenefitStatus.EXPIRED)
+                .map(cb -> cb.getCard().getMemberId())
+                .collect(Collectors.toList());
+
+        return finalMemberIds;
     }
 
     @Override
