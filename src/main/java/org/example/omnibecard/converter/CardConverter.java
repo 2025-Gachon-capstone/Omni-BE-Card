@@ -33,6 +33,32 @@ public class CardConverter {
 
     }
 
+    public static CardResDto.GetCardSummary toGetCardSummary(Card card) {
+
+        return CardResDto.GetCardSummary.builder()
+                .cardId(card.getCardId())
+                .cardNumber(card.getCardNumber())
+                .createdAt(card.getCreatedAt())
+                .build();
+    }
+
+    public static CardResDto.GetCardSummaryPage toGetCardSummaryPage(Page<Card> cards) {
+
+        List<CardResDto.GetCardSummary> content = cards.getContent().stream()
+                .map(CardConverter::toGetCardSummary)
+                .collect(Collectors.toList());
+
+        return CardResDto.GetCardSummaryPage.builder()
+                .cards(content)
+                .isFirst(cards.isFirst())
+                .isLast(cards.isLast())
+                .pageSize(cards.getTotalPages())
+                .totalElements(cards.getTotalElements())
+                .build();
+
+    }
+
+
     public static CardResDto.GetCardForAdmin toGetCardForAdmin(
             Card card,
             MemberResDto.GetMemberList member,

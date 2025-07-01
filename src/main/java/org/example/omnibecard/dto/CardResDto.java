@@ -30,6 +30,32 @@ public class CardResDto {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
+    public static class GetCardSummary{
+
+        private Long cardId;
+        private String cardNumber;
+        private LocalDateTime createdAt;
+
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class GetCardSummaryPage{
+
+        List<CardResDto.GetCardSummary> cards;
+        boolean isFirst;
+        boolean isLast;
+        int pageSize;
+        long totalElements;
+
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class GetMemberId{
 
         private Long memberId;

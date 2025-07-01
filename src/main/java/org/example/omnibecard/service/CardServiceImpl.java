@@ -13,6 +13,10 @@ import org.example.omnibecard.entity.Card;
 import org.example.omnibecard.repository.CardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -135,13 +139,17 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public CardResDto.GetCard getCard(Long memberId) {
+    public CardResDto.GetCardSummaryPage getCard(Long memberId, int page) {
 
-        Card card = cardRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus._NOT_FOUND_CARD));
+        Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "createdAt"));
 
+        Page<Card> cardPage = cardRepository.findAllByMemberId(memberId, pageable);
 
-        return CardConverter.toGetCard(card);
+        if (cardPage.isEmpty()) {
+            throw new GeneralException(ErrorStatus._NOT_FOUND_CARD);
+        }
+
+        return CardConverter.toGetCardSummaryPage(cardPage);
     }
 
     @Override
