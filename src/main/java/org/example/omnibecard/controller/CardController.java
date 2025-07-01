@@ -45,6 +45,21 @@ public class CardController {
 
     }
 
+    @PostMapping("/cards/self")
+    @Operation(summary = "카드 생성 Api",description = "카드 생성 API 입니다.",tags = "Card")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "COMMON200-성공",content = @Content(schema = @Schema(implementation = ApiResult.class))),
+            @ApiResponse(responseCode = "4008", description = "MEMBER4008-사용자를 찾지 못하였습니다.",content = @Content(schema = @Schema(implementation = ApiResult.class))),
+
+    })
+    public ApiResult<Void> createCardByUser(@Parameter(hidden = true) @RequestHeader("X-Authorization-Id") Long memberId,
+                                            @Valid @RequestBody CardReqDto.CreateCardByUser request) {
+
+        cardService.createCardByUser(request,memberId);
+        return ApiResult.onSuccess();
+
+    }
+
     @PostMapping("/cards/verify")
     @Operation(summary = "카드 비밀번호 인증 Api",description = "카드 비밀번호 4자리 입력해주세요. ( 엑세스 토큰 필요 ) ",tags = "Card")
     @ApiResponses({

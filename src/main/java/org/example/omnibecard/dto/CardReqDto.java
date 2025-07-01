@@ -15,6 +15,14 @@ public class CardReqDto {
     }
 
     @Getter
+    public static class CreateCardByUser {
+
+        @NotBlank(message = "카드 비밀번호는 필수입니다.")
+        private String cardPassword;
+
+    }
+
+    @Getter
     public static class VerifyCardPassword {
 
         @NotBlank(message = "카드 비밀번호는 필수입니다.")
