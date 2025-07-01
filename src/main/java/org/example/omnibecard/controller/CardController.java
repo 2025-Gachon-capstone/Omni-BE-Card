@@ -79,9 +79,10 @@ public class CardController {
             @ApiResponse(responseCode = "200", description = "COMMON200-성공",content = @Content(schema = @Schema(implementation = ApiResult.class))),
             @ApiResponse(responseCode = "4002", description = "CARD4002-사용자의 카드가 없습니다.",content = @Content(schema = @Schema(implementation = ApiResult.class))),
     })
-    public ApiResult<CardResDto.GetCard> getCard(@Parameter(hidden = true) @RequestHeader("X-Authorization-Id") Long memberId){
+    public ApiResult<CardResDto.GetCardSummaryPage> getCard(@Parameter(hidden = true) @RequestHeader("X-Authorization-Id") Long memberId,
+                                                 @RequestParam(defaultValue = "0") int page){
 
-        return ApiResult.onSuccess(cardService.getCard(memberId));
+        return ApiResult.onSuccess(cardService.getCard(memberId,page));
     }
 
     @PostMapping("/memberId")
