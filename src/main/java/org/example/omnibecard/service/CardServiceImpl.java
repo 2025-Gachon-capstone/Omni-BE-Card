@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -59,6 +60,48 @@ public class CardServiceImpl implements CardService {
                 Card card = Card.builder()
                         .memberId(createCardDto.getMemberId())
                         .memberName(createCardDto.getMemberName())
+                        .cardNumber(cardNumber)
+                        .cardPassword(passwordEncoder.encode(createCardDto.getCardPassword()))
+                        .securityCode(CardGenerator.generateSecurityCode())
+                        .expiredDate(LocalDateTime.now().plusYears(5))
+                        .build();
+
+                try {
+                    Card savedCard = cardRepository.save(card);
+                    log.info("Saved Card: {}", savedCard.getCardNumber());
+                    return;
+                } catch (DataAccessException e) {
+                    throw new GeneralException(ErrorStatus._DATABASE_SAVE_ERROR); // 새로 정의해도 됨
+                }
+            }
+
+        }
+        throw new GeneralException(ErrorStatus._CARD_NUMBER_GENERATION_FAILED);
+
+    }
+
+    @Override
+    public void createCardByUser(CardReqDto.CreateCardByUser createCardDto, Long memberId) {
+
+        List<Card> existingCards = cardRepository.findAllByMemberId(memberId);
+
+        if (existingCards.isEmpty()) {
+            throw new GeneralException(ErrorStatus._NOT_FOUND_MEMBER);
+        }
+
+        String memberName = existingCards.get(0).getMemberName();
+
+        String cardNumber;
+        int maxTry = 10;
+        int attempt = 0;
+
+        while(attempt++ < maxTry){
+            cardNumber = CardGenerator.generateCardNumber();
+
+            if (!cardRepository.existsByCardNumber(cardNumber)) {
+                Card card = Card.builder()
+                        .memberId(memberId)
+                        .memberName(memberName)
                         .cardNumber(cardNumber)
                         .cardPassword(passwordEncoder.encode(createCardDto.getCardPassword()))
                         .securityCode(CardGenerator.generateSecurityCode())
