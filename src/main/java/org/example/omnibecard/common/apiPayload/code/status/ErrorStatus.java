@@ -26,6 +26,8 @@ public enum ErrorStatus implements BaseErrorCode {
     _DUPLICATE_PASSWORD(HttpStatus.BAD_REQUEST,"MEMBER4006","기존 비밀번호와 동일합니다."),
     _ALREADY_RESIGN(HttpStatus.BAD_REQUEST,"MEMBER4007","이미 탈퇴한 사용자입니다."),
     _NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND,"MEMBER4008","사용자를 찾지 못하였습니다."),
+    _NOT_MATCH_MEMBER(HttpStatus.NOT_FOUND,"MEMBER4009","사용자가 일치하지 않습니다."),
+
 
     // token 상태
     _NOTFOUND_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED,"TOKEN4001","리프레쉬 토큰이 없습니다."),

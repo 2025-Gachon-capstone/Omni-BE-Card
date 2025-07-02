@@ -127,15 +127,20 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public void verifyCard(Long memberId, String cardPassword) {
+    public CardResDto.GetCard getCardDetail(Long memberId, Long cardId, String cardPassword) {
 
-        Card card = cardRepository.findByMemberId(memberId)
+        Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._NOT_FOUND_CARD));
+
+        if (card.getMemberId()!=memberId){
+            throw new GeneralException(ErrorStatus._NOT_MATCH_MEMBER);
+        }
 
         if (!passwordEncoder.matches(cardPassword, card.getCardPassword())) {
             throw new GeneralException(ErrorStatus._NOT_MATCH_CARDPASSWORD);
         }
 
+        return CardConverter.toGetCard(card);
     }
 
     @Override

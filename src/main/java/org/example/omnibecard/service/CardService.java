@@ -10,7 +10,7 @@ public interface CardService {
 
     void createCard(CardReqDto.CreateCard createCardDto);
     void createCardByUser(CardReqDto.CreateCardByUser createCardDto,Long memberId);
-    void verifyCard(Long memberId, String cardPassword);
+    CardResDto.GetCard getCardDetail(Long memberId, Long cardId, String cardPassword);
     CardResDto.GetCardSummaryPage getCard(Long memberId,int page);
     CardResDto.GetMemberId getMemberId(CardReqDto.GetMemberId getMemberIdDto);
 
