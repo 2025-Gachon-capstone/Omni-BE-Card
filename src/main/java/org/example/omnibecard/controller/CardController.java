@@ -60,17 +60,20 @@ public class CardController {
 
     }
 
-    @PostMapping("/cards/verify")
-    @Operation(summary = "카드 비밀번호 인증 Api",description = "카드 비밀번호 4자리 입력해주세요. ( 엑세스 토큰 필요 ) ",tags = "Card")
+    @PostMapping("/cards/{cardId}")
+    @Operation(summary = "카드 상세 정보 가져오기 Api",description = "카드 비밀번호 4자리 입력해주세요. ( 엑세스 토큰 필요 ) ",tags = "Card")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "COMMON200-성공",content = @Content(schema = @Schema(implementation = ApiResult.class))),
             @ApiResponse(responseCode = "4002", description = "CARD4002-사용자의 카드가 없습니다.",content = @Content(schema = @Schema(implementation = ApiResult.class))),
             @ApiResponse(responseCode = "4003", description = "CARD4003-카드비밀번호가 일치하지 않습니다.",content = @Content(schema = @Schema(implementation = ApiResult.class))),
+            @ApiResponse(responseCode = "4009", description = "MEMBER4009-사용자가 일치하지 않습니다.",content = @Content(schema = @Schema(implementation = ApiResult.class))),
+
     })
-    public ApiResult<?> verifyCardPassword(@Parameter(hidden = true) @RequestHeader("X-Authorization-Id") Long memberId,
-                                           @Valid @RequestBody CardReqDto.VerifyCardPassword verifyCardPasswordDto) {
-        cardService.verifyCard(memberId, verifyCardPasswordDto.getCardPassword());
-        return ApiResult.onSuccess();
+    public ApiResult<CardResDto.GetCard> getCardDetail(@Parameter(hidden = true) @RequestHeader("X-Authorization-Id") Long memberId,
+                                           @Valid @RequestBody CardReqDto.VerifyCardPassword verifyCardPasswordDto,
+                                           @PathVariable Long cardId) {
+
+        return ApiResult.onSuccess(cardService.getCardDetail(memberId, cardId, verifyCardPasswordDto.getCardPassword()));
     }
 
     @GetMapping("/my/cards")
