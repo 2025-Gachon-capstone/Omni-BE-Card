@@ -142,6 +142,11 @@ public class CardServiceImpl implements CardService {
 
         log.info("getMemberId: {}", card.getMemberId());
 
+        if (!card.getMemberId().equals(memberId)){
+            log.info("getMemberId: {}", card.getMemberId());
+            log.info("inputmemberId: {}", memberId);
+            throw new GeneralException(ErrorStatus._NOT_MATCH_MEMBER);
+        }
 
         if (!passwordEncoder.matches(cardPassword, card.getCardPassword())) {
             throw new GeneralException(ErrorStatus._NOT_MATCH_CARDPASSWORD);
