@@ -132,9 +132,16 @@ public class CardServiceImpl implements CardService {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._NOT_FOUND_CARD));
 
-        if (card.getMemberId()!=memberId){
-            throw new GeneralException(ErrorStatus._NOT_MATCH_MEMBER);
-        }
+        log.info("inputmemberId: {}", memberId);
+        log.info("inputcardId: {}", cardId);
+
+        log.info("CardNumber: {}", card.getCardNumber());
+        log.info("CardID: {}", card.getCardId());
+        log.info("Card password: {}", card.getCardPassword());
+
+
+        log.info("getMemberId: {}", card.getMemberId());
+
 
         if (!passwordEncoder.matches(cardPassword, card.getCardPassword())) {
             throw new GeneralException(ErrorStatus._NOT_MATCH_CARDPASSWORD);
